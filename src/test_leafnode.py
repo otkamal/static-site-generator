@@ -12,9 +12,9 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(l.to_html(), f"<a href=\"https://example.org\">This is a link.</a>")
 
     def test_leafnode_create_with_empty_value(self):
-        self.assertRaises(TypeError, leafnode.LeafNode, value = None)
+        self.assertRaises(ValueError, leafnode.LeafNode, value = None)
 
     def test_leafnode_to_html_with_empty_value(self):
         l = leafnode.LeafNode("p", "value")
         l.value = None
-        self.assertRaises(TypeError, l.to_html)
+        self.assertRaises(ValueError, l.to_html)
