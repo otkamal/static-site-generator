@@ -1,7 +1,7 @@
 import unittest
 import textnode
 
-class TextTextNode(unittest.TestCase):
+class TestTextNode(unittest.TestCase):
 
     def test_eq(self):
         node1 = textnode.TextNode("This is a text node", textnode.TextType.BOLD)
