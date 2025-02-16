@@ -37,5 +37,29 @@ class TestTextNode(unittest.TestCase):
         node1 = textnode.TextNode("This is a text node", textnode.TextType.BOLD, "http://example.org")
         self.assertEqual(node1.__repr__(), f"TextNode({"This is a text node"}, {textnode.TextType.BOLD}, {"http://example.org"})")
 
+    def test_textnode_to_htmlnode_normal(self):
+        node = textnode.TextNode("This is a text node", textnode.TextType.NORMAL)
+        self.assertEqual(node.to_HTMLNode().to_html(), "This is a text node")
+
+    def test_textnode_to_htmlnode_italic(self):
+        node = textnode.TextNode("This is a italic node", textnode.TextType.ITALIC)
+        self.assertEqual(node.to_HTMLNode().to_html(), "<i>This is a italic node</i>")
+
+    def test_textnode_to_htmlnode_bold(self):
+        node = textnode.TextNode("This is a bold node", textnode.TextType.BOLD)
+        self.assertEqual(node.to_HTMLNode().to_html(), "<b>This is a bold node</b>")
+
+    def test_textnode_to_htmlnode_code(self):
+        node = textnode.TextNode("This is a code node", textnode.TextType.CODE)
+        self.assertEqual(node.to_HTMLNode().to_html(), "<code>This is a code node</code>")
+
+    def test_textnode_to_htmlnode_link(self):
+        node = textnode.TextNode("This is a link node", textnode.TextType.LINK, "http://example.org")
+        self.assertEqual(node.to_HTMLNode().to_html(), "<a href=\"http://example.org\">This is a link node</a>")
+
+    def test_textnode_to_htmlnode_normal(self):
+        node = textnode.TextNode("This is an image node", textnode.TextType.IMAGE, "http://example.org")
+        self.assertEqual(node.to_HTMLNode().to_html(), "<img src=\"http://example.org\" alt=\"This is an image node\"></img>")
+                         
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity = 2)

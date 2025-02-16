@@ -18,3 +18,6 @@ class TestLeafNode(unittest.TestCase):
         l = leafnode.LeafNode("p", "value")
         l.value = None
         self.assertRaises(ValueError, l.to_html)
+
+if __name__ == "__main__":
+    unittest.main(verbosity = 2)

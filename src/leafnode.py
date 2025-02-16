@@ -11,7 +11,7 @@ class LeafNode(htmlnode.HTMLNode):
     def to_html(self):
         if self.value is None:
             raise ValueError("leafnode value must be set")
-        if self.tag is None:
+        if self.tag is None or self.tag == "":
             return f"{self.value}"
         return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>" 
         

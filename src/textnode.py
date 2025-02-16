@@ -1,14 +1,15 @@
+import leafnode
 
 from enum import Enum
 
 class TextType(Enum):
     
-    NORMAL = 0
-    BOLD = 1
-    ITALIC = 2
-    CODE = 3
-    LINK = 4
-    IMAGE = 5
+    NORMAL = None
+    BOLD = "b"
+    ITALIC = "i"
+    CODE = "code"
+    LINK = "a"
+    IMAGE = "img"
 
 class TextNode():
 
@@ -22,3 +23,27 @@ class TextNode():
     
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
+    
+    def to_HTMLNode(self):
+        if self.text_type == TextType.IMAGE:
+            return leafnode.LeafNode(
+                tag = self.text_type.value,
+                value = "",
+                props = {
+                    "src" : self.url,
+                    "alt" : self.text
+                }
+            )
+        elif self.text_type == TextType.LINK:
+            return leafnode.LeafNode(
+                tag = self.text_type.value,
+                value = self.text,
+                props = {
+                    "href" : self.url
+                }
+            )
+        else:
+            return leafnode.LeafNode(
+                tag = self.text_type.value,
+                value = self.text
+            )

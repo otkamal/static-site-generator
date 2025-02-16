@@ -4,7 +4,7 @@ import parentnode
 from leafnode import LeafNode
 
 def main():
-    test = textnode.TextNode("test node", textnode.TextType.BOLD, "https://google.com")
+    test = textnode.TextNode("test node", textnode.TextType.NORMAL, "https://google.com")
     test2 = htmlnode.HTMLNode("a", "hello", [htmlnode.HTMLNode(), htmlnode.HTMLNode()])
     node = parentnode.ParentNode(
     "p",
@@ -24,7 +24,7 @@ def main():
     ],
 )
 
-    print(node.to_html())
+    print(test.to_HTMLNode().to_html())
 
 if __name__ == "__main__":
     main()
