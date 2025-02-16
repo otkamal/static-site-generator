@@ -2,6 +2,7 @@
 from enum import Enum
 
 class TextType(Enum):
+    
     NORMAL = 0
     BOLD = 1
     ITALIC = 2
@@ -10,6 +11,7 @@ class TextType(Enum):
     IMAGE = 5
 
 class TextNode():
+
     def __init__(self, text: str, text_type: TextType, url: str = None):
         self.text = text
         self.text_type = text_type

@@ -3,6 +3,7 @@ import json
 class HTMLNode():
 
     def __init__(self, tag: str = None, value: str = None, children: list = None, props: dict = None):
+
         self.tag = tag
         self.value = value
         self.children = children
@@ -12,9 +13,11 @@ class HTMLNode():
             raise TypeError(f"invalid props for HTMLNode type: {type(props)}")
 
     def to_html(self):
+
         raise NotImplementedError()
     
     def props_to_html(self):
+
         props_as_html = ""
         if self.props != None:
             for p in self.props.keys():
@@ -30,6 +33,5 @@ class HTMLNode():
                 sort_keys = False,
                 indent = 4
             )
-        
         return __to_json__()
     
