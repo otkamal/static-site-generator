@@ -343,9 +343,34 @@ class TestTextNode(unittest.TestCase):
                 1
             )
 
+    def test_markdown_to_textnodes_one(self):
+        test = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        test_nodes = textnode.markdown_to_TextNodes(test)
+        self.assertEqual(len(test_nodes), 10)
+    
+    def test_markdown_to_textnodes_two(self):
+        test = "**text** with an *italic* word and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        test_nodes = textnode.markdown_to_TextNodes(test)
+        self.assertEqual(len(test_nodes), 7)
 
-    # def test_split_nodes_delimiter_image_link(self):
-    #     pass
+    def test_markdown_to_textnodes_three(self):
+        test = "**text** *italic* `code block` ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) [link](https://boot.dev)"
+        test_nodes = textnode.markdown_to_TextNodes(test)
+        self.assertEqual(len(test_nodes), 9)
+
+    def test_markdown_to_textnodes_three(self):
+        test = "**text***italic*`code block`![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg)[link](https://boot.dev)"
+        test_nodes = textnode.markdown_to_TextNodes(test)
+        print("\ntest_markdown_to_textnodes_three\n")
+        textnode.print_TextNodes(test_nodes)
+        self.assertEqual(len(test_nodes), 5)
+
+    def test_markdown_to_textnodes_four(self):
+        test = "This is *text* with an **bold** word and a *italic* and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a ![nother image](https://boot.dev)"
+        test_nodes = textnode.markdown_to_TextNodes(test)
+        print("\ntest_markdown_to_textnodes_four\n")
+        textnode.print_TextNodes(test_nodes)
+        self.assertEqual(len(test_nodes), 10)
     
 if __name__ == "__main__":
     unittest.main(verbosity = 2)
