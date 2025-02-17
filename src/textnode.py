@@ -1,4 +1,5 @@
 import leafnode
+import re
 from enum import Enum
 
 class TextType(Enum):
@@ -12,7 +13,7 @@ class TextType(Enum):
 
 class TextNode():
 
-    def __init__(self, text: str, text_type: TextType, url: str = None):
+    def __init__(self, text: str, text_type: TextType = TextType.NORMAL, url: str = None):
         self.text = text
         self.text_type = text_type
         self.url = url
@@ -22,6 +23,32 @@ class TextNode():
     
     def __repr__(self):
         return f"TextNode(\"{self.text}\", {self.text_type}, {self.url})"
+    
+    def extract_markdown_images(self):
+
+        if self.text_type == TextType.IMAGE:
+            return [(self.text, self.url)]
+
+        if self.text_type != TextType.NORMAL:
+            raise TypeError(f"{self.text_type} is not of type {TextType.NORMAL}")
+    
+        REGEX_MARKDOWN_IMAGE = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+        image_matches = re.findall(REGEX_MARKDOWN_IMAGE, self.text)
+
+        return image_matches
+    
+    def extract_markdown_links(self):
+
+        if self.text_type == TextType.LINK:
+            return [(self.text, self.url)]
+        
+        if self.text_type != TextType.NORMAL:
+            raise TypeError(f"{self.text_type} is not of type {TextType.NORMAL}")
+        
+        REGEX_MARKDOWN_LINK = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+        link_matches = re.findall(REGEX_MARKDOWN_LINK, self.text)
+
+        return link_matches
     
     def is_identical(self, other):
         return self == other and self.text == other.text and self.url == other.url
@@ -50,6 +77,11 @@ class TextNode():
                 value = self.text
             )
 
+def extract_markdown_images(text):
+    MARKDOWN_IMAGE_REGEX = r"!\[.*?\]\(.*?\)"
+    image_matches = re.findall(MARKDOWN_IMAGE_REGEX, text)
+
+
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     if not old_nodes:
         return []
@@ -62,7 +94,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             continue
 
         if first_delim > 0:
-            new_nodes.append(TextNode(node.text[:first_delim], TextType.NORMAL))
+            new_nodes.append(TextNode(node.text[:first_delim]))
 
         matched_delim = node.text.find(delimiter, first_delim + 1)
         if matched_delim == -1:
@@ -74,10 +106,15 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
         if remaining_text:
             new_nodes.extend(
                 split_nodes_delimiter(
-                    [TextNode(remaining_text, TextType.NORMAL)],
+                    [TextNode(remaining_text)],
                     delimiter=delimiter,
                     text_type=text_type
                 )
             )
-
     return new_nodes
+
+def split_nodes_image(old_nodes: list[TextNode]):
+    pass
+
+def split_nodes_link(old_nodes: list[TextNode]):
+    pass

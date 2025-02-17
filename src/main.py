@@ -4,8 +4,8 @@ import parentnode
 from leafnode import LeafNode
 
 def main():
-    test = textnode.TextNode("**This** is a bolded phrase in the middle", textnode.TextType.NORMAL)
-    print(textnode.split_nodes_delimiter([test], "**", textnode.TextType.BOLD))
+    test = textnode.TextNode("This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)", textnode.TextType.NORMAL)
+    print(test.extract_markdown_images())
     test2 = htmlnode.HTMLNode("a", "hello", [htmlnode.HTMLNode(), htmlnode.HTMLNode()])
     node = parentnode.ParentNode(
     "p",
