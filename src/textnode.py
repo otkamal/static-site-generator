@@ -4,7 +4,7 @@ from enum import Enum
 
 class TextType(Enum):
     
-    NORMAL = None
+    TEXT = None
     BOLD = "b"
     ITALIC = "i"
     CODE = "code"
@@ -13,7 +13,7 @@ class TextType(Enum):
 
 class TextNode():
 
-    def __init__(self, text: str, text_type: TextType = TextType.NORMAL, url: str = None):
+    def __init__(self, text: str, text_type: TextType = TextType.TEXT, url: str = None):
         self.text = text
         self.text_type = text_type
         self.url = url
@@ -29,7 +29,7 @@ class TextNode():
         if self.text_type == TextType.IMAGE:
             return [(self.text, self.url)]
 
-        if self.text_type != TextType.NORMAL:
+        if self.text_type != TextType.TEXT:
             return []
     
         REGEX_MARKDOWN_IMAGE = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
@@ -42,7 +42,7 @@ class TextNode():
         if self.text_type == TextType.LINK:
             return [(self.text, self.url)]
         
-        if self.text_type != TextType.NORMAL:
+        if self.text_type != TextType.TEXT:
             return []
         
         REGEX_MARKDOWN_LINK = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
@@ -89,7 +89,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     new_nodes = []
     for node in old_nodes:
         first_delim = node.text.find(delimiter)
-        if node.text_type != TextType.NORMAL or first_delim == -1:
+        if node.text_type != TextType.TEXT or first_delim == -1:
             new_nodes.append(node)
             continue
 

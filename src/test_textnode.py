@@ -25,15 +25,15 @@ class TestTextNode(unittest.TestCase):
 
     def test_is_identical(self):
         self.assertTrue(
-            textnode.TextNode("text", textnode.TextType.NORMAL, "url").is_identical(
-                textnode.TextNode("text", textnode.TextType.NORMAL, "url")
+            textnode.TextNode("text", textnode.TextType.TEXT, "url").is_identical(
+                textnode.TextNode("text", textnode.TextType.TEXT, "url")
             )
         )
 
     def test_is_not_identical(self):
         self.assertFalse(
-            textnode.TextNode("text", textnode.TextType.NORMAL, "url").is_identical(
-                textnode.TextNode("text", textnode.TextType.NORMAL, None)
+            textnode.TextNode("text", textnode.TextType.TEXT, "url").is_identical(
+                textnode.TextNode("text", textnode.TextType.TEXT, None)
             )
         )
 
@@ -52,7 +52,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(node1.__repr__(), f"TextNode({"\"This is a text node\""}, {textnode.TextType.BOLD}, {"http://example.org"})")
 
     def test_textnode_to_htmlnode_normal(self):
-        node = textnode.TextNode("This is a text node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is a text node", textnode.TextType.TEXT)
         self.assertEqual(node.to_HTMLNode().to_html(), "This is a text node")
 
     def test_textnode_to_htmlnode_italic(self):
@@ -76,22 +76,22 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(node.to_HTMLNode().to_html(), "<img src=\"http://example.org\" alt=\"This is an image node\"></img>")
                          
     def test_split_nodes_delimiter_valid_bold_middle_returns_correct_amount(self):
-        node = textnode.TextNode("This is an **bolded** node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is an **bolded** node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "**", textnode.TextType.BOLD)
         self.assertEqual(len(new_nodes), 3)
 
     def test_split_nodes_delimiter_valid_italic_middle_returns_correct_amount(self):
-        node = textnode.TextNode("This is an *italicized* node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is an *italicized* node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "*", textnode.TextType.ITALIC)
         self.assertEqual(len(new_nodes), 3)
 
     def test_split_nodes_delimiter_valid_code_middle_returns_correct_amount(self):
-        node = textnode.TextNode("This is an `code` node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is an `code` node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "`", textnode.TextType.CODE)
         self.assertEqual(len(new_nodes), 3)
 
     def test_split_nodes_delimiter_valid_full_text_bolded(self):
-        node = textnode.TextNode("**This is a bolded node**", textnode.TextType.NORMAL)
+        node = textnode.TextNode("**This is a bolded node**", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "**", textnode.TextType.BOLD)
         with self.subTest():
             self.assertEqual(len(new_nodes), 1)
@@ -99,17 +99,17 @@ class TestTextNode(unittest.TestCase):
             self.assertTrue(new_nodes[0].is_identical(textnode.TextNode("This is a bolded node", textnode.TextType.BOLD)))
 
     def test_split_nodes_delimiter_multi_valid_bold_middle_returns_correct_amount(self):
-        node = textnode.TextNode("This **is** an **bolded** node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This **is** an **bolded** node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "**", textnode.TextType.BOLD)
         self.assertEqual(len(new_nodes), 5)
 
     def test_split_nodes_delimiter_no_delim_found(self):
-        node = textnode.TextNode("This is an bolded node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is an bolded node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "**", textnode.TextType.BOLD)
         self.assertEqual(node, new_nodes[0])
 
     def test_split_nodes_delimiter_delim_no_match(self):
-        node = textnode.TextNode("This is *an** bolded node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("This is *an** bolded node", textnode.TextType.TEXT)
         with self.assertRaises(TypeError):
             textnode.split_nodes_delimiter(
                 [node],
@@ -118,7 +118,7 @@ class TestTextNode(unittest.TestCase):
             )
 
     def test_split_nodes_delimiter_delim_at_front(self):
-        node = textnode.TextNode("*This* is an italicized node", textnode.TextType.NORMAL)
+        node = textnode.TextNode("*This* is an italicized node", textnode.TextType.TEXT)
         new_nodes = textnode.split_nodes_delimiter([node], "*", text_type=textnode.TextType.ITALIC)
         with self.subTest():
             self.assertEqual(len(new_nodes), 2)
@@ -135,7 +135,7 @@ class TestTextNode(unittest.TestCase):
         with self.subTest():
             self.assertEqual(
                 new_nodes[1],
-                textnode.TextNode(" is an italicized node", textnode.TextType.NORMAL)
+                textnode.TextNode(" is an italicized node", textnode.TextType.TEXT)
             )
         with self.subTest():
             self.assertEqual(
@@ -151,7 +151,7 @@ class TestTextNode(unittest.TestCase):
         with self.subTest():
             self.assertEqual(
                 new_nodes[0],
-                textnode.TextNode("This is an italicized ", textnode.TextType.NORMAL)
+                textnode.TextNode("This is an italicized ", textnode.TextType.TEXT)
             )
         with self.subTest():
             self.assertEqual(
@@ -236,7 +236,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_image_one_image(self):
         node = textnode.TextNode(
             "This is text with a link ![alt text](http://example.org) plus other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -247,7 +247,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_image_multi_images(self):
         node = textnode.TextNode(
             "This is text with a link ![alt text](http://example.org) plus ![alt text](http://example.org) other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -258,7 +258,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_image_one_image_start(self):
         node = textnode.TextNode(
             "![alt text](http://example.org) plus other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -269,7 +269,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_image_one_image_end(self):
         node = textnode.TextNode(
             "This is text with a link ![alt text](http://example.org)",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -280,7 +280,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_image_no_image(self):
         node = textnode.TextNode(
             "This is text with a link [alt text](http://example.org)",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -291,7 +291,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_link_one_link(self):     
         node = textnode.TextNode(
             "This is text with a link [alt text](http://example.org) plus other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -302,7 +302,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_link_multi_links(self):
         node = textnode.TextNode(
             "This is text with a link [alt text](http://example.org) plus [alt text](http://example.org) other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -313,7 +313,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_link_one_link_start(self):
         node = textnode.TextNode(
             "[alt text](http://example.org) plus other text",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -324,7 +324,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_link_one_link_end(self):
         node = textnode.TextNode(
             "This is text with a link [alt text](http://example.org)",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
@@ -335,7 +335,7 @@ class TestTextNode(unittest.TestCase):
     def test_split_nodes_link_no_link(self):
         node = textnode.TextNode(
             "This is text with a link ![alt text](http://example.org)",
-            textnode.TextType.NORMAL,
+            textnode.TextType.TEXT,
         )
         with self.subTest():
             self.assertEqual(
