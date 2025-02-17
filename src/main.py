@@ -4,7 +4,8 @@ import parentnode
 from leafnode import LeafNode
 
 def main():
-    test = textnode.TextNode("test node", textnode.TextType.NORMAL, "https://google.com")
+    test = textnode.TextNode("This is a **bolded** phrase in the middle", textnode.TextType.NORMAL)
+    print(textnode.split_nodes_delimeter([test], "**"))
     test2 = htmlnode.HTMLNode("a", "hello", [htmlnode.HTMLNode(), htmlnode.HTMLNode()])
     node = parentnode.ParentNode(
     "p",
