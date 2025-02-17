@@ -51,17 +51,22 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     if not old_nodes:
         return []
     new_nodes = []
+    
     for node in old_nodes:
         first = node.text.find(delimiter)
         if node.text_type != TextType.NORMAL or first == -1:
             new_nodes.append(node)
             continue
+
+        if first > 0:
+            new_nodes.append(TextNode(node.text[:first], TextType.NORMAL))
+
         second = node.text.find(delimiter, first + 1)
         if second == -1:
             raise TypeError(f"split_node_delimiter: could not find matching delimiter for \"{delimiter}\"")
-        if first > 0:
-            new_nodes.append(TextNode(node.text[:first], TextType.NORMAL))
+        
         new_nodes.append(TextNode(node.text[first+len(delimiter):second], text_type))
+       
         remaining_text = node.text[second+len(delimiter):]
         if remaining_text:
             new_nodes.extend(
@@ -71,16 +76,5 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
                     text_type = text_type
                 )
             )
+            
     return new_nodes
-                
-
-
-# def markdown_to_TextType(delimiter: str) -> TextType:
-#     match delimiter:
-#         case "*":
-#             return TextType.ITALIC
-#         case "**":
-#             return TextType.BOLD
-#         case "`":
-#             return TextType.CODE
-#     raise Exception(f"cannot convert delimeter of \"{delimiter}\" to TextType")
