@@ -23,6 +23,9 @@ class TextNode():
     def __repr__(self):
         return f"TextNode(\"{self.text}\", {self.text_type}, {self.url})"
     
+    def is_identical(self, other):
+        return self == other and self.text == other.text and self.url == other.url
+    
     def to_HTMLNode(self):
         if self.text_type == TextType.IMAGE:
             return leafnode.LeafNode(
@@ -46,12 +49,12 @@ class TextNode():
                 tag = self.text_type.value,
                 value = self.text
             )
-        
+
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     if not old_nodes:
         return []
-    new_nodes = []
     
+    new_nodes = []
     for node in old_nodes:
         first_delim = node.text.find(delimiter)
         if node.text_type != TextType.NORMAL or first_delim == -1:
@@ -62,12 +65,12 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             new_nodes.append(TextNode(node.text[:first_delim], TextType.NORMAL))
 
         matched_delim = node.text.find(delimiter, first_delim + 1)
-        if second == -1:
+        if matched_delim == -1:
             raise TypeError(f"split_node_delimiter: could not find matching delimiter for \"{delimiter}\"")
         
-        new_nodes.append(TextNode(node.text[first_delim+len(delimiter):second], text_type))
+        new_nodes.append(TextNode(node.text[first_delim+len(delimiter):matched_delim], text_type))
        
-        remaining_text = node.text[second+len(delimiter):]
+        remaining_text = node.text[matched_delim+len(delimiter):]
         if remaining_text:
             new_nodes.extend(
                 split_nodes_delimiter(
