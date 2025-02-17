@@ -233,5 +233,119 @@ class TestTextNode(unittest.TestCase):
             []
         )
 
+    def test_split_nodes_image_one_image(self):
+        node = textnode.TextNode(
+            "This is text with a link ![alt text](http://example.org) plus other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_image([node])),
+                3
+            )
+
+    def test_split_nodes_image_multi_images(self):
+        node = textnode.TextNode(
+            "This is text with a link ![alt text](http://example.org) plus ![alt text](http://example.org) other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_image([node])),
+                5
+            )
+
+    def test_split_nodes_image_one_image_start(self):
+        node = textnode.TextNode(
+            "![alt text](http://example.org) plus other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_image([node])),
+                2
+            )
+
+    def test_split_nodes_image_one_image_end(self):
+        node = textnode.TextNode(
+            "This is text with a link ![alt text](http://example.org)",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_image([node])),
+                2
+            )
+
+    def test_split_nodes_image_no_image(self):
+        node = textnode.TextNode(
+            "This is text with a link [alt text](http://example.org)",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_image([node])),
+                1
+            )
+
+    def test_split_nodes_link_one_link(self):     
+        node = textnode.TextNode(
+            "This is text with a link [alt text](http://example.org) plus other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_link([node])),
+                3
+            )
+
+    def test_split_nodes_link_multi_links(self):
+        node = textnode.TextNode(
+            "This is text with a link [alt text](http://example.org) plus [alt text](http://example.org) other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_link([node])),
+                5
+            )
+
+    def test_split_nodes_link_one_link_start(self):
+        node = textnode.TextNode(
+            "[alt text](http://example.org) plus other text",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_link([node])),
+                2
+            )
+
+    def test_split_nodes_link_one_link_end(self):
+        node = textnode.TextNode(
+            "This is text with a link [alt text](http://example.org)",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_link([node])),
+                2
+            )
+
+    def test_split_nodes_link_no_link(self):
+        node = textnode.TextNode(
+            "This is text with a link ![alt text](http://example.org)",
+            textnode.TextType.NORMAL,
+        )
+        with self.subTest():
+            self.assertEqual(
+                len(textnode.split_nodes_link([node])),
+                1
+            )
+
+
+    # def test_split_nodes_delimiter_image_link(self):
+    #     pass
+    
 if __name__ == "__main__":
     unittest.main(verbosity = 2)

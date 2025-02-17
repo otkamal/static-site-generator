@@ -30,7 +30,7 @@ class TextNode():
             return [(self.text, self.url)]
 
         if self.text_type != TextType.NORMAL:
-            raise TypeError(f"{self.text_type} is not of type {TextType.NORMAL}")
+            return []
     
         REGEX_MARKDOWN_IMAGE = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
         image_matches = re.findall(REGEX_MARKDOWN_IMAGE, self.text)
@@ -43,7 +43,7 @@ class TextNode():
             return [(self.text, self.url)]
         
         if self.text_type != TextType.NORMAL:
-            raise TypeError(f"{self.text_type} is not of type {TextType.NORMAL}")
+            return []
         
         REGEX_MARKDOWN_LINK = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
         link_matches = re.findall(REGEX_MARKDOWN_LINK, self.text)
@@ -113,7 +113,7 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
             )
     return new_nodes
 
-def split_nodes_image(old_nodes: list[TextNode]):
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     if not old_nodes:
         return []
     
@@ -134,7 +134,7 @@ def split_nodes_image(old_nodes: list[TextNode]):
             )
 
         new_nodes.append(
-            [TextNode(extracted_images[0][0], TextType.IMAGE, extracted_images[0][1])]
+            TextNode(extracted_images[0][0], TextType.IMAGE, extracted_images[0][1])
         )
 
         post_image = node.text[image_index+len(next_image):]
@@ -145,7 +145,7 @@ def split_nodes_image(old_nodes: list[TextNode]):
 
     return new_nodes
 
-def split_nodes_link(old_nodes: list[TextNode]):
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     if not old_nodes:
         return []
     
@@ -166,7 +166,7 @@ def split_nodes_link(old_nodes: list[TextNode]):
             )
 
         new_nodes.append(
-            [TextNode(extracted_links[0][0], TextType.LINK, extracted_links[0][1])]
+            TextNode(extracted_links[0][0], TextType.LINK, extracted_links[0][1])
         )
 
         post_link = node.text[link_index+len(next_link):]
@@ -176,3 +176,17 @@ def split_nodes_link(old_nodes: list[TextNode]):
             )
 
     return new_nodes
+
+def print_TextNodes(nodes: list[TextNode]):
+    print("[\n")
+    for node in nodes:
+        print(f"\t{node},")
+    print("]\n")
+
+def markdown_to_TextNodes(markdown: str) -> list[TextNode]:
+    nodes = split_nodes_delimiter([TextNode(markdown)], "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    return nodes
