@@ -114,7 +114,65 @@ def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: 
     return new_nodes
 
 def split_nodes_image(old_nodes: list[TextNode]):
-    pass
+    if not old_nodes:
+        return []
+    
+    new_nodes = []
+    for node in old_nodes:
+        extracted_images = node.extract_markdown_images()
+        if not extracted_images:
+            new_nodes.append(node)
+            continue
+
+        next_image = f"![{extracted_images[0][0]}]({extracted_images[0][1]})"
+        image_index = node.text.find(next_image)
+        
+        pre_image = node.text[:image_index]
+        if pre_image:
+            new_nodes.extend(
+                split_nodes_image([TextNode(pre_image)])
+            )
+
+        new_nodes.append(
+            [TextNode(extracted_images[0][0], TextType.IMAGE, extracted_images[0][1])]
+        )
+
+        post_image = node.text[image_index+len(next_image):]
+        if post_image:
+            new_nodes.extend(
+                split_nodes_image([TextNode(post_image)])
+            )
+
+    return new_nodes
 
 def split_nodes_link(old_nodes: list[TextNode]):
-    pass
+    if not old_nodes:
+        return []
+    
+    new_nodes = []
+    for node in old_nodes:
+        extracted_links = node.extract_markdown_links()
+        if not extracted_links:
+            new_nodes.append(node)
+            continue
+
+        next_link = f"[{extracted_links[0][0]}]({extracted_links[0][1]})"
+        link_index = node.text.find(next_link)
+        
+        pre_link = node.text[:link_index]
+        if pre_link:
+            new_nodes.extend(
+                split_nodes_link([TextNode(pre_link)])
+            )
+
+        new_nodes.append(
+            [TextNode(extracted_links[0][0], TextType.LINK, extracted_links[0][1])]
+        )
+
+        post_link = node.text[link_index+len(next_link):]
+        if post_link:
+            new_nodes.extend(
+                split_nodes_link([TextNode(post_link)])
+            )
+
+    return new_nodes
