@@ -48,32 +48,29 @@ class TextNode():
             )
         
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
-    if len(old_nodes) == 0:
+    if not old_nodes:
         return []
     new_nodes = []
     for node in old_nodes:
-        if node.text_type != TextType.NORMAL:
+        first = node.text.find(delimiter)
+        if node.text_type != TextType.NORMAL or first == -1:
             new_nodes.append(node)
-        else:
-            print(node.text)
-            first = node.text.find(delimiter)
-            if first == -1:
-                new_nodes.append(node)
-            else:
-                second = node.text.find(delimiter, first + 1)
-                if second == -1:
-                    raise TypeError(f"split_node_delimiter: could not find matching delimiter for \"{delimiter}\"")
-                if node.text[:first] != "":
-                    new_nodes.append(TextNode(node.text[:first], TextType.NORMAL))
-                new_nodes.append(TextNode(node.text[first+len(delimiter):second], text_type))
-                if node.text[second+len(delimiter):] != "":
-                    new_nodes.extend(
-                        split_nodes_delimiter(
-                            [TextNode(node.text[second+len(delimiter):], TextType.NORMAL)],
-                            delimiter = delimiter,
-                            text_type = text_type
-                        )
-                    )
+            continue
+        second = node.text.find(delimiter, first + 1)
+        if second == -1:
+            raise TypeError(f"split_node_delimiter: could not find matching delimiter for \"{delimiter}\"")
+        if first > 0:
+            new_nodes.append(TextNode(node.text[:first], TextType.NORMAL))
+        new_nodes.append(TextNode(node.text[first+len(delimiter):second], text_type))
+        remaining_text = node.text[second+len(delimiter):]
+        if remaining_text:
+            new_nodes.extend(
+                split_nodes_delimiter(
+                    [TextNode(remaining_text, TextType.NORMAL)],
+                    delimiter = delimiter,
+                    text_type = text_type
+                )
+            )
     return new_nodes
                 
 
