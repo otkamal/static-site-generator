@@ -1,5 +1,4 @@
 import leafnode
-
 from enum import Enum
 
 class TextType(Enum):
@@ -48,7 +47,7 @@ class TextNode():
                 value = self.text
             )
         
-def split_nodes_delimeter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
+def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     if len(old_nodes) == 0:
         return []
     new_nodes = []
@@ -56,17 +55,28 @@ def split_nodes_delimeter(old_nodes: list[TextNode], delimiter: str, text_type: 
         if node.text_type != TextType.NORMAL:
             new_nodes.append(node)
         else:
-            split_nodes = []
-            text_blocks = node.text.split(delimiter)
-            for text in text_blocks:
-                split_nodes.append(
-                    TextNode(
-                        text = text,
-                        text_type = markdown_to_TextType(delimiter)
+            print(node.text)
+            first = node.text.find(delimiter)
+            if first == -1:
+                new_nodes.append(node)
+            else:
+                second = node.text.find(delimiter, first + 1)
+                if second == -1:
+                    raise TypeError(f"split_node_delimiter: could not find matching delimiter for \"{delimiter}\"")
+                if node.text[:first] != "":
+                    new_nodes.append(TextNode(node.text[:first], TextType.NORMAL))
+                new_nodes.append(TextNode(node.text[first+len(delimiter):second], text_type))
+                if node.text[second+len(delimiter):] != "":
+                    new_nodes.extend(
+                        split_nodes_delimiter(
+                            [TextNode(node.text[second+len(delimiter):], TextType.NORMAL)],
+                            delimiter = delimiter,
+                            text_type = text_type
+                        )
                     )
-                )
-            new_nodes.extend(split_nodes)
     return new_nodes
+                
+
 
 # def markdown_to_TextType(delimiter: str) -> TextType:
 #     match delimiter:
