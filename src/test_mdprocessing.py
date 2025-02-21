@@ -35,3 +35,23 @@ class TestMdProcessing(unittest.TestCase):
         markdown = "                 This is a single block \n\n  This is a second block                 "
         expecting = ["This is a single block", "This is a second block"]
         self.assertEqual(mdprocessing.markdown_to_blocks(markdown), expecting)
+
+    def test_block_to_blocktype_heading(self):
+        text = "# heading 1"
+        self.assertEqual(mdprocessing.block_to_BlockType(text), mdprocessing.BlockType.HEADING)
+
+    def test_block_to_blocktype_code(self):
+        text = "```This some code```"
+        self.assertEqual(mdprocessing.block_to_BlockType(text), mdprocessing.BlockType.CODE)
+
+    def test_block_to_blocktype_quote(self):
+        text = "> This is a quote"
+        self.assertEqual(mdprocessing.block_to_BlockType(text), mdprocessing.BlockType.QUOTE)
+
+    def test_block_to_blocktype_unordered_list(self):
+        text = "* item 1\n* item 2\n* item 3"
+        self.assertEqual(mdprocessing.block_to_BlockType(text), mdprocessing.BlockType.UNORDERED_LIST)
+
+    def test_block_to_blocktype_ordered_list(self):
+        text = "1. item 1\n2. item 2\n3. item 3"
+        self.assertEqual(mdprocessing.block_to_BlockType(text), mdprocessing.BlockType.ORDERED_LIST)

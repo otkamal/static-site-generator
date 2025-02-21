@@ -11,8 +11,7 @@ def main():
     test_nodes = textnode.markdown_to_TextNodes(test)
     textnode.print_TextNodes(test_nodes)
 
-    test_md = '''* item 1
-    * Item 2'''
+    test_md = '''1. item 1\n2. Item 2'''
     print(mdprocessing.block_to_BlockType(test_md))
 
 if __name__ == "__main__":

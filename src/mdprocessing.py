@@ -37,10 +37,31 @@ def block_to_BlockType(block_text: str) -> BlockType:
     for regex in REGEX_TO_BLOCKTYPE.keys():
         if re.match(regex, block_text):
             return REGEX_TO_BLOCKTYPE[regex]
-        
-    if all(block for block in list(map(lambda x: re.match(REGEX_UNORDERED_LIST, x), block_text.split("\n")))):
-        return BlockType.UNORDERED_LIST
 
-    # need to finished ordered_list implementation
+    is_unordered_list = True
+    for line in block_text.split("\n"):
+        if not re.match(REGEX_UNORDERED_LIST, line):
+            is_unordered_list = False
+            break
     
+    if is_unordered_list:
+        return BlockType.UNORDERED_LIST
+    
+    # need to finished ordered_list implementation
+    is_ordered_list = True
+    item_number = 1
+    for line in block_text.split("\n"):
+        if not re.match(REGEX_ORDERED_LIST, line):
+            is_ordered_list = False
+            break
+
+        if not line.startswith(f"{item_number}."):
+            is_ordered_list = False
+            break
+        item_number += 1
+
+
+    if is_ordered_list:
+        return BlockType.ORDERED_LIST
+
     return BlockType.PARAGRAPH
