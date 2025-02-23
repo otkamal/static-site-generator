@@ -1,4 +1,7 @@
 import re
+import parentnode
+import textnode
+import leafnode
 from enum import Enum
 
 class BlockType(Enum):
@@ -65,3 +68,61 @@ def block_to_BlockType(block_text: str) -> BlockType:
         return BlockType.ORDERED_LIST
 
     return BlockType.PARAGRAPH
+
+def markdown_to_HTMLNode(markdown: str):
+    body = []
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_BlockType(block)
+        match block_type:
+            case BlockType.PARAGRAPH:
+                body.extend(handle_text_block(block))
+            case BlockType.HEADING:
+                body.append(handle_heading_block(block))
+            case BlockType.CODE:
+                body.append(handle_code_block(block))
+            case BlockType.QUOTE:
+                body.append(handle_quote_block(block))
+            case BlockType.UNORDERED_LIST:
+                body.append(handle_ulist_block(block))
+            case BlockType.ORDERED_LIST:
+                body.append(handle_olist_block(block))
+    html = ""
+    for item in body:
+        html += item.to_html()
+    print(html)
+
+def handle_text_block(block: str) -> list[leafnode.LeafNode]:
+    htmlnodes = []
+    textnodes = textnode.markdown_to_TextNodes(block)
+    for tn in textnodes:
+        htmlnodes.append(tn.to_HTMLNode())
+    return htmlnodes
+
+def handle_heading_block(block: str) -> leafnode.LeafNode:
+    block_split = block.split(" ", maxsplit=1)
+    num_hashtag = len(block_split[0])
+    text = block_split[1]
+    return leafnode.LeafNode(tag = f"h{num_hashtag}", value = text)
+
+def handle_code_block(block: str) -> parentnode.ParentNode:
+    code = leafnode.LeafNode(tag = "code", value = block.strip("`"))
+    return parentnode.ParentNode(tag = "pre", children = [code])
+
+def handle_quote_block(block: str) -> leafnode.LeafNode:
+    text = block.split(">", maxsplit=1)[1]
+    return leafnode.LeafNode(tag = "blockquote", value = text)
+
+def handle_ulist_block(block: str) -> parentnode.ParentNode:
+    list_items = []
+    list_item_texts = [text.split("-", maxsplit=1) for text in block.split("\n")]
+    for item in list_item_texts:
+        list_items.append(leafnode.LeafNode(tag = "li", value = item[1]))
+    return parentnode.ParentNode(tag = "ul", children = list_items)
+
+def handle_olist_block(block: str) -> parentnode.ParentNode:
+    list_items = []
+    list_item_texts = [text.split(".", maxsplit=1) for text in block.split("\n")]
+    for item in list_item_texts:
+        list_items.append(leafnode.LeafNode(tag = "li", value = item[1]))
+    return parentnode.ParentNode(tag = "ol", children = list_items)

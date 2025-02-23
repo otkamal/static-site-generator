@@ -30,4 +30,3 @@ class HTMLNode():
                 indent = 4
             )
         return __to_json__()
-    
