@@ -16,7 +16,6 @@ def clear_destination(dest: str) -> None:
         except RuntimeError as e:
             print(f"failed to delete {file_path}. {e}")
 
-
 def recursive_copy(src: str, dest: str) -> None:
     for path in os.listdir(src):
         old_path = os.path.join(src, path)
