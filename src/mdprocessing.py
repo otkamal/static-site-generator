@@ -87,7 +87,7 @@ def markdown_to_HTMLNode(markdown: str) -> parentnode.ParentNode:
                 body.append(handle_ulist_block(block))
             case BlockType.ORDERED_LIST:
                 body.append(handle_olist_block(block))
-    return parentnode.ParentNode(tag = "body", children = body)
+    return parentnode.ParentNode(tag = "div", children = body)
 
 def handle_text_block(block: str) -> list[leafnode.LeafNode]:
     htmlnodes = []
