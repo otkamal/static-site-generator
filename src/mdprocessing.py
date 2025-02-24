@@ -69,7 +69,7 @@ def block_to_BlockType(block_text: str) -> BlockType:
 
     return BlockType.PARAGRAPH
 
-def markdown_to_HTMLNode(markdown: str):
+def markdown_to_HTMLNode(markdown: str) -> parentnode.ParentNode:
     body = []
     blocks = markdown_to_blocks(markdown)
     for block in blocks:
@@ -87,10 +87,7 @@ def markdown_to_HTMLNode(markdown: str):
                 body.append(handle_ulist_block(block))
             case BlockType.ORDERED_LIST:
                 body.append(handle_olist_block(block))
-    html = ""
-    for item in body:
-        html += item.to_html()
-    print(html)
+    return parentnode.ParentNode(tag = "body", children = body)
 
 def handle_text_block(block: str) -> list[leafnode.LeafNode]:
     htmlnodes = []
@@ -99,11 +96,12 @@ def handle_text_block(block: str) -> list[leafnode.LeafNode]:
         htmlnodes.append(tn.to_HTMLNode())
     return htmlnodes
 
-def handle_heading_block(block: str) -> leafnode.LeafNode:
+def handle_heading_block(block: str) -> parentnode.ParentNode:
     block_split = block.split(" ", maxsplit=1)
     num_hashtag = len(block_split[0])
     text = block_split[1]
-    return leafnode.LeafNode(tag = f"h{num_hashtag}", value = text)
+    children = handle_text_block(text)
+    return parentnode.ParentNode(tag = f"h{num_hashtag}", children = children)
 
 def handle_code_block(block: str) -> parentnode.ParentNode:
     code = leafnode.LeafNode(tag = "code", value = block.strip("`"))
