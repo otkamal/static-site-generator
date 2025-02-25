@@ -1,11 +1,10 @@
 import mdprocessing
-from copystatic import copy_static
+import copystatic as cs
+import generatepage as gp
 
 def main():
-
-    # with open("public/test.md", "r") as md:
-    #     print(mdprocessing.markdown_to_HTMLNode(md.read()))
-    copy_static("static", "public")
+    cs.copy_static("static", "public")
+    gp.generate_page("content/index.md", "public/index.html", "template.html")
         
-if __name__ == "__main__":
+if __name__ == "__main__": 
     main()

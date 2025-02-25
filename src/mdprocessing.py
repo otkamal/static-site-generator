@@ -109,18 +109,22 @@ def handle_code_block(block: str) -> parentnode.ParentNode:
 
 def handle_quote_block(block: str) -> leafnode.LeafNode:
     text = block.split(">", maxsplit=1)[1]
-    return leafnode.LeafNode(tag = "blockquote", value = text)
+    return leafnode.LeafNode(tag = "blockquote", value = text.strip())
 
 def handle_ulist_block(block: str) -> parentnode.ParentNode:
     list_items = []
-    list_item_texts = [text.split("-", maxsplit=1) for text in block.split("\n")]
+    list_item_texts = [text.split("*", maxsplit=1) for text in block.split("\n")]
     for item in list_item_texts:
-        list_items.append(leafnode.LeafNode(tag = "li", value = item[1]))
+        text = item[1].strip()
+        children = handle_text_block(text)
+        list_items.append(parentnode.ParentNode(tag = "li", children = children))
     return parentnode.ParentNode(tag = "ul", children = list_items)
 
 def handle_olist_block(block: str) -> parentnode.ParentNode:
     list_items = []
     list_item_texts = [text.split(".", maxsplit=1) for text in block.split("\n")]
     for item in list_item_texts:
-        list_items.append(leafnode.LeafNode(tag = "li", value = item[1]))
+        text = item[1].strip()
+        children = handle_text_block(text)
+        list_items.append(parentnode.ParentNode(tag = "li", children = children))
     return parentnode.ParentNode(tag = "ol", children = list_items)
