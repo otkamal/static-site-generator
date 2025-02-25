@@ -1,3 +1,4 @@
+import os
 import mdprocessing
 
 def extract_title(markdown: str) -> str:
@@ -21,4 +22,12 @@ def generate_page(from_path: str, to_path: str, template_path: str) -> None:
             with open(to_path, "w") as copy:
                  copy.write(template)
 
-        
+def generate_page_recursive(src: str, dest: str, template_path: str) -> None:
+    for path in os.listdir(src):
+        old_path = os.path.join(src, path)
+        new_path = os.path.join(dest, path.replace(".md", ".html"))
+        if os.path.isfile(old_path):
+            generate_page(old_path, new_path, template_path)
+        else:
+            os.mkdir(new_path)
+            generate_page_recursive(old_path, new_path, template_path)

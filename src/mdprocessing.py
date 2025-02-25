@@ -113,7 +113,7 @@ def handle_quote_block(block: str) -> leafnode.LeafNode:
 
 def handle_ulist_block(block: str) -> parentnode.ParentNode:
     list_items = []
-    list_item_texts = [text.split("*", maxsplit=1) for text in block.split("\n")]
+    list_item_texts = [text.split(text[0], maxsplit=1) for text in block.split("\n")]
     for item in list_item_texts:
         text = item[1].strip()
         children = handle_text_block(text)
